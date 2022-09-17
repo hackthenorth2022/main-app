@@ -2,37 +2,49 @@ from PIL import Image
 from google.cloud import vision
 import io
 
-# TEMP: Replace with Image object from Samantha (PIL)
-# pilImage = Image.new("RGB", (320, 240), (255, 0, 0))
-pilImage = Image.open("assets/sample_text_1.png")
+sampleImage1 = Image.open("assets/sample_text_1.png")
 
-# Create in-memory PNG - like you want for Google Cloud Vision
-buffer = io.BytesIO()
-pilImage.save(buffer, format="PNG")
+# Convert Image object (PIL) to bytes - so we can access the image in-memory
+#   and don't need to store the Image object in a file.
+def pilToBytes(pilImage):
+    buffer = io.BytesIO()
+    pilImage.save(buffer, format="PNG")
+    return buffer.getvalue()
 
-pngBytes = buffer.getvalue()
 
-# TEMP: Replace with GCP API call
-print(pngBytes[:20])
+# Input: Image object (PIL) to be passed in from Samantha's app.
+# Output: Text contained within the image.
+def convertImageToText(pilImage=sampleImage1):
+    pngBytes = pilToBytes(pilImage)
 
-# GCP code
-client = vision.ImageAnnotatorClient()
+    # TEMP: Double check we got the bytes for the PNG
+    print(pngBytes[:20])
 
-gcpImage = vision.Image(content=pngBytes)
-response = client.text_detection(image=gcpImage)
-texts = response.text_annotations
+    # GCP code
+    client = vision.ImageAnnotatorClient()
 
-for text in texts:
-    print('\n"{}"'.format(text.description))
+    gcpImage = vision.Image(content=pngBytes)
+    response = client.text_detection(image=gcpImage)
+    texts = response.text_annotations
 
-    vertices = [
-        "({},{})".format(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices
-    ]
+    # TEMP: Check texts received from the response
+    for text in texts:
+        print('\n"{}"'.format(text.description))
 
-    print("bounds: {}".format(",".join(vertices)))
+        vertices = [
+            "({},{})".format(vertex.x, vertex.y)
+            for vertex in text.bounding_poly.vertices
+        ]
 
-    if response.error.message:
-        raise Exception(
-            "{}\nFor more info on error messages, check: "
-            "https://cloud.google.com/apis/design/errors".format(response.error.message)
-        )
+        print("bounds: {}".format(",".join(vertices)))
+
+        if response.error.message:
+            raise Exception(
+                "{}\nFor more info on error messages, check: "
+                "https://cloud.google.com/apis/design/errors".format(
+                    response.error.message
+                )
+            )
+
+
+convertImageToText()
