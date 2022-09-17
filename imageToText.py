@@ -3,7 +3,8 @@ from google.cloud import vision
 import io
 
 # TEMP: Replace with Image object from Samantha (PIL)
-pilImage = Image.new("RGB", (320, 240), (255, 0, 0))
+# pilImage = Image.new("RGB", (320, 240), (255, 0, 0))
+pilImage = Image.open("assets/sample_text_1.png")
 
 # Create in-memory PNG - like you want for Google Cloud Vision
 buffer = io.BytesIO()
