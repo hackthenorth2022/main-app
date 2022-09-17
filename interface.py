@@ -6,16 +6,16 @@ class ImageToOutput:
         self.vision_client = ''
         self.word_areas = {} 
 
-    def __get_translation(text):
+    def __get_translation(self, text):
         pass
 
-    def __parse_image(pil_image):
+    def __parse_image(self, pil_image):
         pass
     
-    def setup(image):
+    def setup(self, image):
         pass
 
-    def process(coordinates):
+    def process(self, coordinates):
 
         #Outputs word translated;
         pass
