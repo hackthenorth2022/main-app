@@ -3,24 +3,22 @@ from google.cloud import vision
 import io
 from utils import rectangle, word_rectangle_pair
 
-sampleImage1 = Image.open("assets/sample_text_2.png")
+sampleImage = Image.open("assets/sample_text_2.png")
 
 # Convert Image object (PIL) to bytes - so we can access the image in-memory
 #   and don't need to store the Image object in a file.
-def pilToBytes(pilImage):
+def __pil_to_bytes(pil_image):
     buffer = io.BytesIO()
-    pilImage.save(buffer, format="PNG")
+    pil_image.save(buffer, format="PNG")
     return buffer.getvalue()
 
 
 # Input: Image object (PIL) to be passed in from Samantha's app.
 # Output: [string of all text in the image, 2D array containing wordRectanglePairs]
-def parseImage(pilImage=sampleImage1):
-    pngBytes = pilToBytes(pilImage)
+def parse_image(client, pil_image=sampleImage):
+    pngBytes = __pil_to_bytes(pil_image)
 
     # GCP code
-    client = vision.ImageAnnotatorClient()  # TODO: Move into the class.
-
     gcpImage = vision.Image(content=pngBytes)
     response = client.text_detection(image=gcpImage)
 
@@ -33,12 +31,12 @@ def parseImage(pilImage=sampleImage1):
     texts = response.text_annotations
 
     # Grab all text from the image
-    fullText = response.text_annotations[0].description
+    full_text = response.text_annotations[0].description
     texts.pop(0)
 
     # Put each individual word into data structure
-    linesArray = []  # array of array of word-rectangle pairs, sorted by y-coord.
-    wordRectanglePairs = []  # array of word-rectangle pairs, sorted by x-coord.
+    lines_array = []  # array of array of word-rectangle pairs, sorted by y-coord.
+    word_rectangle_pairs = []  # array of word-rectangle pairs, sorted by x-coord.
 
     for textObj in texts:
         word = textObj.description
@@ -47,18 +45,20 @@ def parseImage(pilImage=sampleImage1):
         )
 
         if word.isalpha():
-            if wordRectanglePairs and not rect.sameRectangleY(
-                wordRectanglePairs[0].rect
+            if word_rectangle_pairs and not rect.sameRectangleY(
+                word_rectangle_pairs[0].rect
             ):
-                linesArray.append(wordRectanglePairs)
-                wordRectanglePairs = []
+                lines_array.append(word_rectangle_pairs)
+                word_rectangle_pairs = []
 
-            wordRectanglePairs.append(word_rectangle_pair.WordRectanglePair(word, rect))
+            word_rectangle_pairs.append(
+                word_rectangle_pair.WordRectanglePair(word, rect)
+            )
 
-    return [fullText, linesArray]
+    return [full_text, lines_array]
 
     # Testing correctness
-    # for line in linesArray:
+    # for line in lines_array:
     #     print("--------------------")
     #     for wordRectanglePair in line:
     #         print("Word: {}".format(wordRectanglePair.word))
@@ -71,6 +71,3 @@ def parseImage(pilImage=sampleImage1):
     #         #         wordRectanglePair.rect.maxY,
     #         #     )
     #         # )
-
-
-parseImage()

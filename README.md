@@ -1,2 +1,5 @@
 # main-app
-Main application 
+
+Main application
+
+Make sure you run: `pip install -r requirements.txt`
