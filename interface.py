@@ -78,9 +78,9 @@ class ImageToOutput:
         return line[mid2].word
 
     def process(self, x, y):
-
-        # Outputs word translated;
-        pass
+        word = self.find_word(x, y)
+        processedWord = self.__get_translation([word])[0]
+        return processedWord
 
 
 # (DAVID) TESTING:
