@@ -7,6 +7,7 @@ import imageToText
 
 from google.cloud import translate
 from google.cloud import vision
+from PyDictionary import PyDictionary
 
 
 class ImageToOutput:
@@ -20,6 +21,9 @@ class ImageToOutput:
         self.word_areas = []  # 2D array containing wordRectanglePairs
 
         self.full_text = ""
+
+    def get_defintion(self, word):
+        return PyDictionary.meaning(word)
 
     # Takes list of text, returns list of translations
     def __get_translation(self, text):
@@ -83,3 +87,7 @@ class ImageToOutput:
 # thing = ImageToOutput()
 # thing.setup(Image.open("assets/sample_text_2.png"))
 # print(thing.find_word(211, 320))
+
+# Testing:
+# output = ImageToOutput()
+# print(output.get_defintion("moist"))
