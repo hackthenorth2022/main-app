@@ -4,6 +4,8 @@ from PIL import Image
 
 from google.cloud import translate
 from google.cloud import vision
+from PyDictionary import PyDictionary
+
 
 # Convert Image object (PIL) to bytes - so we can access the image in-memory
 #   and don't need to store the Image object in a file.
@@ -20,6 +22,9 @@ class ImageToOutput:
         self.vision_client = ''
         self.word_areas = {} 
 
+    def get_defintion(self, word):
+        return PyDictionary.meaning(word)
+
     # Takes list of text, returns list of translations
     def __get_translation(self, text):
         parent = f"projects/{self.project_id}"
@@ -31,7 +36,7 @@ class ImageToOutput:
         
         return [translation.translated_text for translation in response.translations]
 
-    def parse_image(self, pil_image):
+    def __parse_image(self, pil_image):
         pngBytes = pilToBytes(pil_image)
 
         # TEMP: Double check we got the bytes for the PNG
@@ -55,4 +60,4 @@ class ImageToOutput:
         pass
 
 output = ImageToOutput()
-print(output.parse_image(Image.open("assets/sample_text_1.png")))
+print(output.get_defintion("moist"))
