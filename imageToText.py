@@ -3,7 +3,7 @@ from google.cloud import vision
 import io
 from utils import rectangle, word_rectangle_pair
 
-sampleImage = Image.open("assets/sample_text_2.png")
+sampleImage = Image.open("assets/sample_text_3.png")
 
 # Convert Image object (PIL) to bytes - so we can access the image in-memory
 #   and don't need to store the Image object in a file.

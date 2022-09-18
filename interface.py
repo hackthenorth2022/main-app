@@ -9,6 +9,8 @@ from google.cloud import translate
 from google.cloud import vision
 from PyDictionary import PyDictionary
 
+import wordToSentence
+
 
 class ImageToOutput:
     def __init__(self):
@@ -44,6 +46,7 @@ class ImageToOutput:
         self.full_text = full_text_and_lines_array[0]
         self.word_areas = full_text_and_lines_array[1]
 
+    # Return the word at the coordinates, as well as the column and row.
     def find_word(self, x, y):
         # Binary search by y-coordinate first
         low = 0
@@ -75,22 +78,28 @@ class ImageToOutput:
             else:
                 break
 
-        return line[mid2].word
+        return line[mid2].word, mid, mid2
 
     def process(self, x, y, process_type="translate"):
-        word = self.find_word(x, y)
+        word, column, row = self.find_word(x, y)
         if process_type == "definition":
             processedWord = self.__get_definition(word)
         else:
             processedWord = self.__get_translation([word])[0]
-        return processedWord
+        return processedWord, column, row
 
 
 # (DAVID) TESTING:
-# thing = ImageToOutput()
-# thing.setup(Image.open("assets/sample_text_2.png"))
-# print(thing.find_word(211, 320))
+thing = ImageToOutput()
+thing.setup(Image.open("assets/sample_text_3.png"))
+processedWord, column, row = thing.find_word(211, 320)
+print(processedWord)
+
 
 # Testing:
 # output = ImageToOutput()
 # print(output.get_defintion("moist"))
+
+print(wordToSentence.wordToSentence("", column, row, thing.word_areas))
+# print("-----")
+# print(thing.full_text)
