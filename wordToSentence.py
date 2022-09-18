@@ -2,10 +2,6 @@ from utils import rectangle, word_rectangle_pair
 
 
 def wordToSentence(paragraph, i, j, wordRectanglePairArray):
-    minX = wordRectanglePairArray[i][j].rect.minX
-    maxX = wordRectanglePairArray[i][j].rect.maxX
-    minY = wordRectanglePairArray[i][j].rect.minY
-    maxY = wordRectanglePairArray[i][j].rect.maxY
 
     prevLine = wordRectanglePairArray[i - 1]
     currentLine = wordRectanglePairArray[i]
@@ -24,16 +20,10 @@ def wordToSentence(paragraph, i, j, wordRectanglePairArray):
         if len(wordRectanglePair.word) <= 1:
             continue
 
-        if (
-            startj == -1
-            and wordRectanglePair.word[0].isupper()
-            and wordRectanglePair.word[1].islower()
-        ):
+        if startj == -1 and wordRectanglePair.word[0].isupper() and wordRectanglePair.word[1].islower():
             starti = i
             startj = j
-        elif (
-            wordRectanglePair.word[0].isupper() and wordRectanglePair.word[1].islower()
-        ):
+        elif wordRectanglePair.word[0].isupper() and wordRectanglePair.word[1].islower():
             endi = i
             endj = j
 
@@ -70,9 +60,13 @@ def wordToSentence(paragraph, i, j, wordRectanglePairArray):
 
     while curi <= endi:
         sentence += wordRectanglePairArray[curi][curj].word + " "
-        if curj == len(wordRectanglePairArray[curi]) - 1:
+        if curi == endi and curj == endj:
+            break
+        elif curj == len(wordRectanglePairArray[curi]) - 1:
             curi += 1
             curj = 0
-        curj += 1
+        else:
+            curj += 1
+
 
     return sentence

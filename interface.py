@@ -91,7 +91,7 @@ class ImageToOutput:
 
 # (DAVID) TESTING:
 thing = ImageToOutput()
-thing.setup(Image.open("assets/sample_text_3.png"))
+thing.setup(Image.open("assets/sample_text_2.png"))
 processedWord, column, row = thing.find_word(211, 320)
 print(processedWord)
 
