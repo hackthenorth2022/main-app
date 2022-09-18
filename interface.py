@@ -22,7 +22,7 @@ class ImageToOutput:
 
         self.full_text = ""
 
-    def get_defintion(self, word):
+    def __get_defintion(self, word):
         return PyDictionary.meaning(word)
 
     # Takes list of text, returns list of translations
