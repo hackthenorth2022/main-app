@@ -1,5 +1,10 @@
 import cohere
-co = cohere.Client('s7OmPrULyizD7cpDCIS7eIfM1bfsCuM4xHQMZgSB')
+
+from os import environ
+
+cohere_key = environ.get("COHERE_API_KEY", "")
+print(cohere_key)
+co = cohere.Client(cohere_key)
 
 def elaborate(prompt):
     prediction = co.generate(

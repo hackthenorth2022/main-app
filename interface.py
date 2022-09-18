@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from email.mime import image
 import io
 from os import environ
@@ -16,7 +19,7 @@ class ImageToOutput:
     def __init__(self):
         self.translate_client = translate.TranslationServiceClient()
 
-        self.project_id = environ.get("PROJECT_ID", "")
+        self.project_id = environ.get("GOOGLE_PROJECT_ID", "")
         assert self.project_id
 
         self.vision_client = vision.ImageAnnotatorClient()
