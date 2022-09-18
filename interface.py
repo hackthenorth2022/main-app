@@ -22,7 +22,7 @@ class ImageToOutput:
 
         self.full_text = ""
 
-    def __get_defintion(self, word):
+    def __get_definition(self, word):
         return PyDictionary.meaning(word)
 
     # Takes list of text, returns list of translations
@@ -79,7 +79,10 @@ class ImageToOutput:
 
     def process(self, x, y, process_type="translate"):
         word = self.find_word(x, y)
-        processedWord = self.__get_translation([word])[0]
+        if process_type == "definition":
+            processedWord = self.__get_definition(word)
+        else:
+            processedWord = self.__get_translation([word])[0]
         return processedWord
 
 
