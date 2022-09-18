@@ -85,14 +85,14 @@ class ImageToOutput:
         if process_type == "definition":
             processedWord = self.__get_definition(word)
         else:
-            processedWord = self.__get_translation([word])[0]
+            processedWord = self.__get_translation(word)[0]
         return processedWord, column, row
 
 
 # (DAVID) TESTING:
 thing = ImageToOutput()
 thing.setup(Image.open("assets/sample_text_3.png"))
-processedWord, column, row = thing.find_word(211, 320)
+processedWord, column, row = thing.process(211, 320)
 print(processedWord)
 
 
