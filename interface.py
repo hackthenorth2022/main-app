@@ -10,7 +10,6 @@ from google.cloud import vision
 from PyDictionary import PyDictionary
 
 
-
 class ImageToOutput:
     def __init__(self):
         self.translate_client = translate.TranslationServiceClient()
@@ -45,39 +44,50 @@ class ImageToOutput:
         self.full_text = full_text_and_lines_array[0]
         self.word_areas = full_text_and_lines_array[1]
 
-    def __find_word(self, x, y):
-        return "hello"
-        # # Binary search by y-coordinate first
-        # low = 0
-        # mid = 0
-        # high = len(self.word_areas)
-        # while low <= high:
-        #     mid = (high + low) // 2
-        #     rectangle = self.word_areas[mid][0].rect
-        #     if s. < y:
-        #         low = mid + 1
-        #     elif self.word_areas[mid] > y:
-        #         high = mid - 1
-        #     else:
-        #         break
+    def find_word(self, x, y):
+        # Binary search by y-coordinate first
+        low = 0
+        mid = 0
+        high = len(self.word_areas)
+        while low <= high:
+            mid = (high + low) // 2
+            rectangle = self.word_areas[mid][0].rect
+            comparisonRes = rectangle.inRangeY(y)
+            if comparisonRes == 1:
+                low = mid + 1
+            elif comparisonRes == -1:
+                high = mid - 1
+            else:
+                break
 
-        # line = self.word_areas[mid]
-        # low2 = 0
-        # mid2 = 0
-        # high2 = len(line) - 1
-        # while low2 <= high2:
-        #     mid2 = (high2 + low2) // 2
-        #     if line[mid] < x:
-        #         low = mid + 1
-        #     elif self.word_areas[mid] > y:
-        #         high = mid - 1
-        #     else:
-        #         break
+        line = self.word_areas[mid]
+        low2 = 0
+        mid2 = 0
+        high2 = len(line) - 1
+        while low2 <= high2:
+            mid2 = (high2 + low2) // 2
+            rectangle = line[mid2].rect
+            comparisonRes = rectangle.inRangeX(x)
+            if comparisonRes == 1:
+                low2 = mid2 + 1
+            elif comparisonRes == -1:
+                high2 = mid2 - 1
+            else:
+                break
+
+        return line[mid2].word
 
     def process(self, x, y):
+        word = self.find_word(x, y)
+        processedWord = self.__get_translation([word])[0]
+        return processedWord
 
-        # Outputs word translated;
-        pass
 
+# (DAVID) TESTING:
+# thing = ImageToOutput()
+# thing.setup(Image.open("assets/sample_text_2.png"))
+# print(thing.find_word(211, 320))
 
-output = ImageToOutput()
+# Testing:
+# output = ImageToOutput()
+# print(output.get_defintion("moist"))

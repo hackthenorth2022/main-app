@@ -55,19 +55,19 @@ def parse_image(client, pil_image=sampleImage):
                 word_rectangle_pair.WordRectanglePair(word, rect)
             )
 
-    return [full_text, lines_array]
-
-    # Testing correctness
+    # # Testing correctness
     # for line in lines_array:
     #     print("--------------------")
     #     for wordRectanglePair in line:
-    #         print("Word: {}".format(wordRectanglePair.word))
-    #         # print(
-    #         #     "Word: {}\nMinX: {} MaxX: {} MinY: {} MaxY: {}".format(
-    #         #         wordRectanglePair.word,
-    #         #         wordRectanglePair.rect.minX,
-    #         #         wordRectanglePair.rect.maxX,
-    #         #         wordRectanglePair.rect.minY,
-    #         #         wordRectanglePair.rect.maxY,
-    #         #     )
-    #         # )
+    #         # print("Word: {}".format(wordRectanglePair.word))
+    #         print(
+    #             "Word: {}\nMinX: {} MaxX: {} MinY: {} MaxY: {}".format(
+    #                 wordRectanglePair.word,
+    #                 wordRectanglePair.rect.minX,
+    #                 wordRectanglePair.rect.maxX,
+    #                 wordRectanglePair.rect.minY,
+    #                 wordRectanglePair.rect.maxY,
+    #             )
+    #         )
+
+    return [full_text, lines_array]
