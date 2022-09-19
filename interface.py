@@ -172,13 +172,13 @@ class ImageToOutput:
         return [full_text, lines_array]
 
     # (DAVID) TESTING:
-thing = ImageToOutput()
-thing.setup(Image.open("assets/sample_text_3.png"))
-#thing.word_areas
-#len(self.word_areas)
-for i in range(len(thing.word_areas)):
-    for j in range(len(thing.word_areas[i])):
-        print(thing.word_areas[i][j])
+# thing = ImageToOutput()
+# thing.setup(Image.open("assets/sample_text_3.png"))
+# #thing.word_areas
+# #len(self.word_areas)
+# for i in range(len(thing.word_areas)):
+#     for j in range(len(thing.word_areas[i])):
+#         print(thing.word_areas[i][j])
 
 
 # processedWord, column, row = thing.process(211, 320)
