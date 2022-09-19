@@ -13,6 +13,7 @@ from google.cloud import vision
 # from PyDictionary import PyDictionary
 
 import wordToSentence
+import dictionary
 
 
 class ImageToOutput:
@@ -26,6 +27,8 @@ class ImageToOutput:
         self.word_areas = []  # 2D array containing wordRectanglePairs
 
         self.full_text = ""
+
+        self.dictionary = dictionary.mydict
 
     # def __get_definition(self, word):
     #     return PyDictionary.meaning(word)
@@ -55,6 +58,8 @@ class ImageToOutput:
         high = len(self.word_areas)
         while low <= high:
             mid = (high + low) // 2
+            if(mid >= len(self.word_areas)):
+                return "", 0, 0
             rectangle = self.word_areas[mid][0].rect
             comparisonRes = rectangle.inRangeY(y)
             if comparisonRes == 1:
@@ -70,6 +75,8 @@ class ImageToOutput:
         high2 = len(line) - 1
         while low2 <= high2:
             mid2 = (high2 + low2) // 2
+            if(mid2 >= len(self.word_areas)):
+                return "", 0, 0
             rectangle = line[mid2].rect
             comparisonRes = rectangle.inRangeX(x)
             if comparisonRes == 1:
@@ -87,8 +94,9 @@ class ImageToOutput:
         #     processedWord = self.__get_definition(word)
         # else:
         print("non-translated is: "+word)
-        processedWord = self.__get_translation(word)[0]
-        return processedWord, column, row
+        #processedWord = self.__get_translation(word)[0]
+        processedWord = self.dictionary.get(word)
+        return processedWord, column, row, word
 
     sampleImage = Image.open("assets/sample_text_3.png")
 
@@ -142,7 +150,8 @@ class ImageToOutput:
                     word_rectangle_pairs = []
 
                 word_rectangle_pairs.append(
-                    word_rectangle_pair.WordRectanglePair(word, rect, self.__get_translation(word)[0])
+                    #word_rectangle_pair.WordRectanglePair(word, rect, self.__get_translation(word)[0])
+                    word_rectangle_pair.WordRectanglePair(word, rect, self.dictionary.get(word))
                 )
 
         # # Testing correctness
@@ -165,15 +174,15 @@ class ImageToOutput:
     # (DAVID) TESTING:
 thing = ImageToOutput()
 thing.setup(Image.open("assets/sample_text_3.png"))
-# thing.word_areas
-# len(self.word_areas)
+#thing.word_areas
+#len(self.word_areas)
 for i in range(len(thing.word_areas)):
-    for j in range(len(thing.word_areas[0])):
+    for j in range(len(thing.word_areas[i])):
         print(thing.word_areas[i][j])
 
 
-processedWord, column, row = thing.process(211, 320)
-print(processedWord)
+# processedWord, column, row = thing.process(211, 320)
+# print(processedWord)
     # processedWord2, column2, row2 = thing.process(300, 100)
     # print(processedWord2)
 

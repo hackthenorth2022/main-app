@@ -190,6 +190,8 @@ class TrackingWindow(QtWidgets.QWidget):
         self._marker_pixmap = QtGui.QPixmap(qt_marker_image)
         self._marker_widget.setPixmap(self._marker_pixmap)
 
+        self.translationEnabled = True
+
         # Text instruction layer / widget
         text_label = QtWidgets.QLabel()
         text_label.setText('ESC: Exit\nQ: Run a Quick Start\nC: Run a Calibration')
@@ -210,19 +212,25 @@ class TrackingWindow(QtWidgets.QWidget):
 
         # Right ride bar to display translation
         translation_display_widget = QtWidgets.QVBoxLayout()
-        wordContent = QtWidgets.QLabel("Hello")
-        wordContent.setMinimumWidth(100)
-        wordContent.setMaximumHeight(100)
-        wordContent.setStyleSheet("background-color:lightblue")
-        translatedContent = QtWidgets.QLabel("你好")
-        translatedContent.setMinimumWidth(100)
-        translatedContent.setMaximumHeight(100)
-        translatedContent.setStyleSheet("background-color:lightblue")
-        translation_display_widget.addWidget(wordContent)
-        translation_display_widget.addWidget(translatedContent)
+        self.wordContent = QtWidgets.QLabel("", self)
+        self.wordContent.setMinimumWidth(200)
+        self.wordContent.setMinimumHeight(150)
+        self.wordContent.setStyleSheet("background-color:lightblue")
+        self.translatedContent = QtWidgets.QLabel("",self)
+        self.translatedContent.setMinimumWidth(200)
+        self.translatedContent.setMinimumHeight(150)
+        self.translatedContent.setStyleSheet("background-color:lightblue")
+        translation_display_widget.addWidget(self.wordContent)
+        translation_display_widget.addWidget(self.translatedContent)
         
-        #layout.addLayout(translation_display_widget, 0, 1)
+        # layout.addLayout(translation_display_widget, 0, 1)
         layout.addWidget(self._marker_widget, 0, 0)
+        self.translatedContent.move(1620, 550)
+        self.translatedContent.setAlignment(QtCore.Qt.AlignCenter)
+        self.translatedContent.setStyleSheet("QLabel { background-color : white; font-size: 30px; color : black; border-radius: 25px; text-align: center; border: 2px solid black; }")
+        self.wordContent.move(1620, 350)
+        self.wordContent.setAlignment(QtCore.Qt.AlignCenter)
+        self.wordContent.setStyleSheet("QLabel { background-color : white; color : black; font-size: 30px; border-radius: 25px; text-align: center; border: 2px solid black; }")
         #layout.addWidget(text_label, 0, 0)
         #layout.addWidget(screenshot_widget, 0, 0)
 
@@ -264,17 +272,20 @@ class TrackingWindow(QtWidgets.QWidget):
         self.lastTrackPointX = 0
         self.lastTrackPointY = 0
         self.TRACKDISBUFFER = 0.05
-        self.TRACKTIMEBUFFER = 1
+        self.TRACKTIMEBUFFER = 2
         self.slowDownFactor = 0
         self.startDelay = 100
         self.apiCallCounter = 0
         self.tool = interface.ImageToOutput()
         self.tool.setup(self.take_screen_shot())
+        self.XOFFSET = 123
+        self.YOFFSET = 5
         
         
     #print(tool.process(300, 400, "translate")[0])
 
-
+    #def isWithinDefBox(self):
+    #    if(1620 <= self._xcoord and y <= )
 
     def _setup_video_timer(self):
         self._imagetimer_interval = 1000 / 60
@@ -311,27 +322,23 @@ class TrackingWindow(QtWidgets.QWidget):
 
         self._xcoord = self._running_xcoord / len(self._point_deque)
         self._ycoord = self._running_ycoord / len(self._point_deque)
-        if(self.startDelay >= 0):
+        if(self._xcoord - self.lastTrackPointX < self.TRACKDISBUFFER and self._ycoord - self.lastTrackPointY < self.TRACKDISBUFFER):
+            #self.trackTime+=0.1
+            
+            #if(self.apiCallCounter < 20):
+            result = self.tool.process(self._xcoord-100, self._ycoord+5, "translate")
+            if(result[0]!="" and result[0] is not None):
+                print("Tracking!! Translate now! at "+str(self._xcoord)+", "+str(self._ycoord))
+                self.translatedContent.setText(result[0])
+                self.wordContent.setText(result[3])
+            
+            #self.apiCallCounter+=1
+            #print(self.tool.process(self._xcoord, self._ycoord, "translate")[0])
+        else:
             self.lastTrackPointX = self._xcoord
             self.lastTrackPointY = self._ycoord
             print("--------------------------")
-            self.trackTime = 0
-            self.startDelay -= 1
-        else:
-            if(self._xcoord - self.lastTrackPointX < self.TRACKDISBUFFER and self._ycoord - self.lastTrackPointY < self.TRACKDISBUFFER):
-                self.trackTime+=0.1
-                if(self.trackTime >= self.TRACKTIMEBUFFER):
-                    print("Tracking!! Translate now! at "+str(self._xcoord)+", "+str(self._ycoord))
-                    if(self.apiCallCounter < 20):
-                        print(self.tool.process(self._xcoord, self._ycoord, "translate")[0])
-                        self.apiCallCounter+=1
-                    
-                    #print(self.tool.process(self._xcoord, self._ycoord, "translate")[0])
-            else:
-                self.lastTrackPointX = self._xcoord
-                self.lastTrackPointY = self._ycoord
-                print("--------------------------")
-                self.trackTime = 0
+            #self.trackTime = 0
         # print("coordinate "+str(self._xcoord) + ", "+str(self._ycoord))
 
     def take_screen_shot(self):
